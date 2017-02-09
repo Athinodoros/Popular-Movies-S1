@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Popular Movie</string>
+    <string name="values_not_loaded">There has been an error trying \n to fetch more awesome movies :/ \n try again in a bit :)</string>
+</resources>
