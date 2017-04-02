@@ -172,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.movi
             movieAdapter.notifyDataSetChanged();
         }
         if (mBundleRecyclerViewState != null) {
-
             Parcelable listState = mBundleRecyclerViewState.getParcelable(LIST_STATE);
             movieRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
         }
@@ -363,11 +362,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.movi
             getFavorites();
             movieAdapter.notifyDataSetChanged();
         } else {
-            if (movieRecyclerView.getLayoutManager() != null)
-                if (movieRecyclerView.getLayoutManager().getItemCount() > 0)
-                    page = movieRecyclerView.getLayoutManager().getItemCount() / 20 + 1;
-                else
-                    page = 1;
+            if (movieRecyclerView.getLayoutManager() != null &&movieRecyclerView.getLayoutManager().getItemCount()>0)
+                page = movieRecyclerView.getLayoutManager().getItemCount() / 20 + 1;
+            else
+                page = 1;
             call = apiService.getMovies(sharedPreferences.getString(getString(R.string.by), getString(R.string.popular_value)), API_KEY, page);
             if (!call.isExecuted())
                 call.enqueue(new Callback<FullResponseObject>() {
