@@ -148,6 +148,7 @@ public class MovieDetails extends AppCompatActivity {
         callVideo = apiService.getVideos(id, MainActivity.API_KEY);
 
         tabLayout.setupWithViewPager(viewPager);
+
         callReviews = apiService.getReviews(id, MainActivity.API_KEY);
         callReviews.enqueue(new Callback<ReviewResponse>() {
             @Override

@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.movi
         if (movieAdapter == null)
             movieAdapter = new MovieAdapter(this, this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         if (sharedPreferences.getString(getString(R.string.by), null) == null)
             sharedPreferences.edit().putString(getString(R.string.by), getString(R.string.popular_value)).commit();
         apiService = ApiClient.getClient().create(MovieBackEndInterface.class);
@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.movi
         errorHolder.setText(com.example.athinodoros.popularmovie1.R.string.values_not_loaded);
         mSpinner.setOnItemSelectedListener(this);
         movieRecyclerView.addOnScrollListener(mScrollListener);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         if (savedInstanceState != null) {
             mLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LIST_STATE));
             movieRecyclerView.getLayoutManager().scrollToPosition(savedInstanceState.getInt(LAST_POSITION));
@@ -151,9 +150,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.movi
         }
         if (savedInstanceState != null)
             position = savedInstanceState.getInt(LAST_POSITION);
-        if (mBundleRecyclerViewState != null){
-            mLayoutManager.onRestoreInstanceState(mBundleRecyclerViewState.getParcelable(LIST_STATE));
-        movieRecyclerView.setLayoutManager(mLayoutManager);
+        if (mBundleRecyclerViewState != null)
+            movieRecyclerView.getLayoutManager().onRestoreInstanceState(mBundleRecyclerViewState.getParcelable(LIST_STATE));
         movieRecyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.movi
                     movieRecyclerView.scrollToPosition(mBundleRecyclerViewState.getInt(LAST_POSITION));
 
             }
-        }, 1500);}
+        }, 1500);
     }
 
     @Override
@@ -363,14 +361,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.movi
     public void getMovies(boolean isAdding) {
         if (sharedPreferences.getString(getString(R.string.by), null).equals(getString(R.string.fav_value)) && !isAdding) {
             getFavorites();
-            Log.e("FUCKKKKKKKKKKKK", "THE METHOD IS CALLED");
             movieAdapter.notifyDataSetChanged();
         } else {
-
-            if (movieRecyclerView.getLayoutManager().getItemCount() > 0)
-                page = movieRecyclerView.getLayoutManager().getItemCount() / 20 + 1;
-            else
-                page = 1;
+            if (movieRecyclerView.getLayoutManager() != null)
+                if (movieRecyclerView.getLayoutManager().getItemCount() > 0)
+                    page = movieRecyclerView.getLayoutManager().getItemCount() / 20 + 1;
+                else
+                    page = 1;
             call = apiService.getMovies(sharedPreferences.getString(getString(R.string.by), getString(R.string.popular_value)), API_KEY, page);
             if (!call.isExecuted())
                 call.enqueue(new Callback<FullResponseObject>() {
